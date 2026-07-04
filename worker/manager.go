@@ -9,8 +9,8 @@ import (
 	"syscall"
 	"time"
 
-	"github.com/google/uuid"
 	"github.com/nguereza-tony/corekit/logger"
+	"github.com/nguereza-tony/corekit/metrics"
 )
 
 // WorkerStatus represents the current status of a worker
@@ -196,8 +196,8 @@ func (m *Manager) RecordWorkerRun(workerName string) {
 		now := time.Now()
 		mw.Status.LastRun = &now
 
-		IncrementWorkerRun(workerName)
-		SetWorkerLastRun(workerName, now.Unix())
+		metrics.IncrementWorkerRun(workerName)
+		metrics.SetWorkerLastRun(workerName, now.Unix())
 	}
 }
 
@@ -218,7 +218,7 @@ func (m *Manager) RecordWorkerError(workerName string, err error) {
 			mw.Status.Status = "warning"
 		}
 
-		IncrementWorkerError(workerName)
+		metrics.IncrementWorkerError(workerName)
 	}
 }
 
@@ -283,7 +283,7 @@ func (m *Manager) GetUptime() time.Duration {
 }
 
 // RestartWorker restarts a worker by name
-func (m *Manager) RestartWorker(ctx context.Context, workerName string, accountID uuid.UUID, ipAddress, userAgent string) error {
+func (m *Manager) RestartWorker(ctx context.Context, workerName string) error {
 	m.mu.Lock()
 	defer m.mu.Unlock()
 

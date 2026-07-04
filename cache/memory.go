@@ -5,6 +5,8 @@ import (
 	"strconv"
 	"sync"
 	"time"
+
+	"github.com/nguereza-tony/corekit/config"
 )
 
 // memoryItem represents a cached item in memory
@@ -33,7 +35,7 @@ type memoryCache struct {
 }
 
 // NewMemoryCache creates a new in-memory cache
-func NewMemoryCache(cfg *MemoryCacheConfig) Cache {
+func NewMemoryCache(cfg *config.MemoryCacheConfig) Cache {
 	cleanupInterval := time.Duration(cfg.CleanupInterval) * time.Second
 	if cleanupInterval <= 0 {
 		cleanupInterval = 60 * time.Second

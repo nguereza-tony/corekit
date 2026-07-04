@@ -19,13 +19,13 @@ func GenerateAccessToken(
 	sub string,
 	roles []string,
 	secret string,
-	ttlMinutes int,
+	expireTime int,
 ) (string, error) {
 	claims := AuthClaims{
 		Sub:   sub,
 		Roles: roles,
 		RegisteredClaims: jwt.RegisteredClaims{
-			ExpiresAt: jwt.NewNumericDate(time.Now().Add(time.Duration(ttlMinutes) * time.Minute)),
+			ExpiresAt: jwt.NewNumericDate(time.Now().Add(time.Duration(expireTime) * time.Second)),
 			IssuedAt:  jwt.NewNumericDate(time.Now()),
 		},
 	}

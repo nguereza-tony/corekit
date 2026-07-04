@@ -5,6 +5,7 @@ import (
 	"time"
 
 	"github.com/go-mail/mail/v2"
+	"github.com/nguereza-tony/corekit/config"
 )
 
 // SMTPTransport implements EmailTransport using SMTP
@@ -14,7 +15,7 @@ type SMTPTransport struct {
 }
 
 // NewSMTPTransport creates a new SMTP transport
-func NewSMTPTransport(cfg SMTPConfig) *SMTPTransport {
+func NewSMTPTransport(cfg config.SMTPConfig) *SMTPTransport {
 	dialer := mail.NewDialer(cfg.Host, cfg.Port, cfg.Username, cfg.Password)
 	dialer.Timeout = time.Duration(cfg.Timeout) * time.Second
 

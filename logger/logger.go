@@ -6,6 +6,7 @@ import (
 	"sync"
 
 	"github.com/natefinch/lumberjack"
+	"github.com/nguereza-tony/corekit/config"
 	"github.com/sirupsen/logrus"
 )
 
@@ -18,7 +19,7 @@ var (
 	loggerOnce     sync.Once
 )
 
-func NewLogger(cfg LoggingConfig) *Logger {
+func NewLogger(cfg config.LoggingConfig) *Logger {
 	loggerOnce.Do(func() {
 		log := logrus.New()
 

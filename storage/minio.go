@@ -8,6 +8,7 @@ import (
 
 	"github.com/minio/minio-go/v7"
 	"github.com/minio/minio-go/v7/pkg/credentials"
+	"github.com/nguereza-tony/corekit/config"
 	"github.com/nguereza-tony/corekit/logger"
 )
 
@@ -18,7 +19,7 @@ type MinIOStorage struct {
 }
 
 // NewMinIOStorage creates a new MinIO storage client
-func NewMinIOStorage(cfg *StorageConfig, log *logger.Logger) (*MinIOStorage, error) {
+func NewMinIOStorage(cfg *config.StorageConfig, log *logger.Logger) (*MinIOStorage, error) {
 	client, err := minio.New(cfg.Endpoint, &minio.Options{
 		Creds:  credentials.NewStaticV4(cfg.AccessKey, cfg.SecretKey, ""),
 		Secure: cfg.UseSSL,

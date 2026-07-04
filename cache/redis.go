@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"time"
 
+	"github.com/nguereza-tony/corekit/config"
 	"github.com/redis/go-redis/v9"
 )
 
@@ -15,7 +16,7 @@ type redisCache struct {
 }
 
 // NewRedisCache creates a new Redis cache
-func NewRedisCache(cfg *CacheConfig) (Cache, error) {
+func NewRedisCache(cfg *config.CacheConfig) (Cache, error) {
 	client := redis.NewClient(&redis.Options{
 		Addr:         fmt.Sprintf("%s:%d", cfg.Redis.Host, cfg.Redis.Port),
 		Password:     cfg.Redis.Password,

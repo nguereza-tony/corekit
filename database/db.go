@@ -5,6 +5,7 @@ import (
 	"sync"
 	"time"
 
+	"github.com/nguereza-tony/corekit/config"
 	"github.com/nguereza-tony/corekit/logger"
 	"gorm.io/driver/mysql"
 	"gorm.io/driver/postgres"
@@ -21,8 +22,8 @@ var (
 
 // Connect initializes and returns the database connection (singleton)
 func NewDatabase(
-	dbConfig *DatabaseConfig,
-	loggerConfig *logger.LoggingConfig,
+	dbConfig *config.DatabaseConfig,
+	loggerConfig *config.LoggingConfig,
 	logger *logger.Logger,
 ) (*gorm.DB, error) {
 	var err error
@@ -77,7 +78,7 @@ func GetDbInstance() *gorm.DB {
 }
 
 // buildDSN constructs the connection string
-func buildDSN(cfg *DatabaseConfig) string {
+func buildDSN(cfg *config.DatabaseConfig) string {
 	return fmt.Sprintf(
 		"host=%s port=%d user=%s password=%s dbname=%s sslmode=%s",
 		cfg.Host, cfg.Port, cfg.User, cfg.Password, cfg.DBName, cfg.SSLMode,

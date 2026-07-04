@@ -5,8 +5,8 @@ import (
 	"time"
 
 	"github.com/gin-gonic/gin"
+	"github.com/nguereza-tony/corekit/common"
 	"github.com/nguereza-tony/corekit/errors"
-	"github.com/nguereza-tony/corekit/helper"
 	"github.com/nguereza-tony/corekit/logger"
 )
 
@@ -319,7 +319,7 @@ func apiResponse[T any](
 	message string,
 	meta any,
 ) {
-	requestID := helper.GetRequestID(c)
+	requestID := common.GetRequestID(c)
 	timestamp := time.Now().UTC().Format(time.RFC3339)
 
 	if success {
