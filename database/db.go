@@ -79,6 +79,12 @@ func GetDbInstance() *gorm.DB {
 
 // buildDSN constructs the connection string
 func buildDSN(cfg *config.DatabaseConfig) string {
+	if cfg.Driver == "mysql" {
+		return fmt.Sprintf(
+			"%s:%s@tcp(%s:%d)/%s?charset=utf8mb4&parseTime=True&loc=Local",
+			cfg.User, cfg.Password, cfg.Host, cfg.Port, cfg.DBName,
+		)
+	}
 	return fmt.Sprintf(
 		"host=%s port=%d user=%s password=%s dbname=%s sslmode=%s",
 		cfg.Host, cfg.Port, cfg.User, cfg.Password, cfg.DBName, cfg.SSLMode,
