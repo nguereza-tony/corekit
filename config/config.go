@@ -116,7 +116,7 @@ type RateLimitConfig struct {
 type CoreConfig struct {
 	Server     ServerConfig     `mapstructure:"server"`
 	CORS       CORSConfig       `mapstructure:"cors"`
-	Logging    LoggingConfig    `mapstructure:"database"`
+	Logging    LoggingConfig    `mapstructure:"logging"`
 	Database   DatabaseConfig   `mapstructure:"database"`
 	Auth       AuthConfig       `mapstructure:"auth"`
 	Cache      CacheConfig      `mapstructure:"cache"`
