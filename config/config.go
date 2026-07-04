@@ -2,7 +2,6 @@ package config
 
 import (
 	"strings"
-	"sync"
 
 	"github.com/joho/godotenv"
 	"github.com/spf13/viper"
@@ -114,7 +113,7 @@ type RateLimitConfig struct {
 	Burst                    int  `mapstructure:"burst"`
 }
 
-type Config struct {
+type CoreConfig struct {
 	Server     ServerConfig     `mapstructure:"server"`
 	CORS       CORSConfig       `mapstructure:"cors"`
 	Logging    LoggingConfig    `mapstructure:"database"`
@@ -127,25 +126,17 @@ type Config struct {
 	AntiReplay AntiReplayConfig `mapstructure:"antireplay"`
 }
 
-var (
-	configInstance *Config
-	configOnce     sync.Once
-)
-
-func NewConfig(configFilePath, configDir string) *Config {
-	configOnce.Do(func() {
-		configInstance = loadConfig(configDir, configFilePath)
-	})
-	return configInstance
+func NewConfig[T any](configFilePath, configDir string) *T {
+	return loadConfig[T](configDir, configFilePath)
 }
 
-func loadConfig(configDir, configFilePath string) *Config {
+func loadConfig[T any](configDir, configFilePath string) *T {
 	loadDotEnv()
 	setupViper(configDir, configFilePath)
 	readConfigFile()
 	bindEnvVariables()
 
-	var cfg Config
+	var cfg T
 	if err := viper.Unmarshal(&cfg); err != nil {
 		panic(err)
 	}
