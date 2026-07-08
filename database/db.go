@@ -125,21 +125,17 @@ func getLogger(cfg config.DatabaseLoggingConfig) gormlogger.Interface {
 			})
 	}
 
-	// Create a new standard logger pointing to our MultiWriter
-	// This ensures that the output is properly formatted and safe for concurrent use
-	newLog := log.New(io.MultiWriter(writers...), "\r\n", log.LstdFlags)
+	newLog := log.New(io.MultiWriter(writers...), "\r\n", log.LstdFlags|log.Lmicroseconds)
 
 	// Wrap it in a GORM Logger
-	logger := gormlogger.New(
+	return gormlogger.New(
 		newLog,
 		gormlogger.Config{
 			SlowThreshold:             time.Duration(cfg.SlowSqlThreshold) * time.Second,
 			LogLevel:                  getGORMLogLevel(cfg.Level),
 			IgnoreRecordNotFoundError: true,
-			ParameterizedQueries:      true,
-			Colorful:                  false,
+			Colorful:                  true,
 		},
 	)
 
-	return logger
 }
