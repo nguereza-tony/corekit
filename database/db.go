@@ -99,9 +99,9 @@ func buildDSN(cfg *config.DatabaseConfig) string {
 // getGORMLogLevel maps our log level to GORM's log level
 func getGORMLogLevel(level string) gormlogger.LogLevel {
 	switch level {
-	case "debug":
+	case "debug", "info":
 		return gormlogger.Info
-	case "info":
+	case "warn":
 		return gormlogger.Warn
 	default:
 		return gormlogger.Error
