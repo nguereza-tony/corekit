@@ -110,7 +110,9 @@ func getGORMLogLevel(level string) gormlogger.LogLevel {
 
 func getLogger(cfg config.DatabaseLoggingConfig) gormlogger.Interface {
 	var writers []io.Writer
-	writers = append(writers, os.Stdout)
+	if cfg.Console {
+		writers = append(writers, os.Stdout)
+	}
 
 	if cfg.FilePath != "" {
 		writers = append(writers,
@@ -134,6 +136,7 @@ func getLogger(cfg config.DatabaseLoggingConfig) gormlogger.Interface {
 			SlowThreshold:             time.Duration(cfg.SlowSqlThreshold) * time.Second,
 			LogLevel:                  getGORMLogLevel(cfg.Level),
 			IgnoreRecordNotFoundError: true,
+			ParameterizedQueries:      true,
 			Colorful:                  false,
 		},
 	)

@@ -53,6 +53,7 @@ type DatabaseLoggingConfig struct {
 	MaxBackups       int    `mapstructure:"max_backups"`
 	MaxAgeDays       int    `mapstructure:"max_age_days"`
 	Compress         bool   `mapstructure:"compress"`
+	Console          bool   `mapstructure:"console"`
 	SlowSqlThreshold int    `mapstructure:"slow_sql_threshold"` // seconds
 }
 
