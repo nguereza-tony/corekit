@@ -43,7 +43,9 @@ func NewDatabase(
 			driver = sqlserver.Open(dsn)
 		}
 		db, connErr := gorm.Open(driver, &gorm.Config{
-			Logger: gormlogger.Default.LogMode(logLevel),
+			Logger:         gormlogger.Default.LogMode(logLevel),
+			PrepareStmt:    true,
+			TranslateError: true,
 		})
 		if connErr != nil {
 			err = fmt.Errorf("failed to connect to database: %w", connErr)
