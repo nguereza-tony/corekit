@@ -2,9 +2,13 @@ package database
 
 import (
 	"fmt"
+	"io"
+	"log"
+	"os"
 	"sync"
 	"time"
 
+	"github.com/natefinch/lumberjack"
 	"github.com/nguereza-tony/corekit/config"
 	"github.com/nguereza-tony/corekit/logger"
 	"gorm.io/driver/mysql"
@@ -30,7 +34,6 @@ func NewDatabase(
 	dbOnce.Do(func() {
 		dsn := buildDSN(dbConfig)
 
-		logLevel := getGORMLogLevel(loggerConfig.Level)
 		var driver gorm.Dialector
 		switch dbConfig.Driver {
 		case "mysql":
@@ -43,7 +46,7 @@ func NewDatabase(
 			driver = sqlserver.Open(dsn)
 		}
 		db, connErr := gorm.Open(driver, &gorm.Config{
-			Logger:         gormlogger.Default.LogMode(logLevel),
+			Logger:         getLogger(dbConfig.Logging),
 			PrepareStmt:    true,
 			TranslateError: true,
 		})
@@ -103,4 +106,37 @@ func getGORMLogLevel(level string) gormlogger.LogLevel {
 	default:
 		return gormlogger.Error
 	}
+}
+
+func getLogger(cfg config.DatabaseLoggingConfig) gormlogger.Interface {
+	var writers []io.Writer
+	writers = append(writers, os.Stdout)
+
+	if cfg.FilePath != "" {
+		writers = append(writers,
+			&lumberjack.Logger{
+				Filename:   cfg.FilePath,
+				MaxSize:    cfg.MaxSizeMB,
+				MaxBackups: cfg.MaxBackups,
+				MaxAge:     cfg.MaxAgeDays,
+				Compress:   cfg.Compress,
+			})
+	}
+
+	// Create a new standard logger pointing to our MultiWriter
+	// This ensures that the output is properly formatted and safe for concurrent use
+	newLog := log.New(io.MultiWriter(writers...), "\r\n", log.LstdFlags)
+
+	// Wrap it in a GORM Logger
+	logger := gormlogger.New(
+		newLog,
+		gormlogger.Config{
+			SlowThreshold:             time.Duration(cfg.SlowSqlThreshold) * time.Second,
+			LogLevel:                  getGORMLogLevel(cfg.Level),
+			IgnoreRecordNotFoundError: true,
+			Colorful:                  false,
+		},
+	)
+
+	return logger
 }

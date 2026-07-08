@@ -46,17 +46,28 @@ type CacheConfig struct {
 	Memory     MemoryCacheConfig `mapstructure:"memory"`
 }
 
+type DatabaseLoggingConfig struct {
+	Level            string `mapstructure:"level"`
+	FilePath         string `mapstructure:"file_path"`
+	MaxSizeMB        int    `mapstructure:"max_size_mb"`
+	MaxBackups       int    `mapstructure:"max_backups"`
+	MaxAgeDays       int    `mapstructure:"max_age_days"`
+	Compress         bool   `mapstructure:"compress"`
+	SlowSqlThreshold int    `mapstructure:"slow_sql_threshold"` // seconds
+}
+
 type DatabaseConfig struct {
-	Driver          string `mapstructure:"driver"` // mysql, postgres, sqlite, sqlserver
-	Host            string `mapstructure:"host"`
-	Port            int    `mapstructure:"port"`
-	User            string `mapstructure:"user"`
-	Password        string `mapstructure:"password"`
-	DBName          string `mapstructure:"dbname"`
-	SSLMode         string `mapstructure:"sslmode"`
-	MaxOpenConns    int    `mapstructure:"max_open_conns"`
-	MaxIdleConns    int    `mapstructure:"max_idle_conns"`
-	ConnMaxLifetime int    `mapstructure:"conn_max_lifetime"` // seconds
+	Driver          string                `mapstructure:"driver"` // mysql, postgres, sqlite, sqlserver
+	Host            string                `mapstructure:"host"`
+	Port            int                   `mapstructure:"port"`
+	User            string                `mapstructure:"user"`
+	Password        string                `mapstructure:"password"`
+	DBName          string                `mapstructure:"dbname"`
+	SSLMode         string                `mapstructure:"sslmode"`
+	MaxOpenConns    int                   `mapstructure:"max_open_conns"`
+	MaxIdleConns    int                   `mapstructure:"max_idle_conns"`
+	ConnMaxLifetime int                   `mapstructure:"conn_max_lifetime"` // seconds
+	Logging         DatabaseLoggingConfig `mapstructure:"logging"`
 }
 
 type EmailConfig struct {
