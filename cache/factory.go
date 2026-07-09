@@ -15,6 +15,8 @@ func NewCache(cfg *config.CacheConfig) (Cache, error) {
 	switch cfg.Type {
 	case "redis":
 		return NewRedisCache(cfg)
+	case "file":
+		return NewFileCache(cfg)
 	case "memory":
 		return NewMemoryCache(&cfg.Memory), nil
 	default:
