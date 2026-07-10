@@ -15,7 +15,6 @@ type ResponseDTO[T any] struct {
 	Success   bool   `json:"success" example:"true"`
 	Timestamp string `json:"timestamp" example:"2026-06-25T10:15:30Z"`
 	Code      string `json:"code" example:"OK"`
-	Message   string `json:"message,omitempty" example:"Operation completed successfully"`
 	RequestID string `json:"request_id,omitempty" example:"550e8400-e29b-41d4-a716-446655440000"`
 	Data      T      `json:"data,omitempty"`
 	Meta      any    `json:"meta,omitempty"`
@@ -48,12 +47,6 @@ func NewResponseDTO[T any](success bool) ResponseDTO[T] {
 // WithRequestID adds a request ID to the response
 func (r ResponseDTO[T]) WithRequestID(requestID string) ResponseDTO[T] {
 	r.RequestID = requestID
-	return r
-}
-
-// WithMessage adds a message to the response
-func (r ResponseDTO[T]) WithMessage(message string) ResponseDTO[T] {
-	r.Message = message
 	return r
 }
 
@@ -115,7 +108,6 @@ func OK[T any](
 	statusCode int,
 	data *T,
 	code string,
-	message string,
 	meta any,
 ) {
 	apiResponse(
@@ -125,7 +117,7 @@ func OK[T any](
 		data,
 		code,
 		map[string]string{},
-		message,
+		"",
 		meta,
 	)
 }
@@ -133,28 +125,25 @@ func OK[T any](
 func Success[T any](
 	c *gin.Context,
 	data *T,
-	message string,
 	meta any,
 ) {
-	OK(c, http.StatusOK, data, "OK", message, meta)
+	OK(c, http.StatusOK, data, "OK", meta)
 }
 
 func Created[T any](
 	c *gin.Context,
 	data *T,
-	message string,
 	meta any,
 ) {
-	OK(c, http.StatusCreated, data, "CREATED", message, meta)
+	OK(c, http.StatusCreated, data, "CREATED", meta)
 }
 
 func Accepted[T any](
 	c *gin.Context,
 	data *T,
-	message string,
 	meta any,
 ) {
-	OK(c, http.StatusAccepted, data, "ACCEPTED", message, meta)
+	OK(c, http.StatusAccepted, data, "ACCEPTED", meta)
 }
 
 func NoContent(c *gin.Context) {
@@ -259,22 +248,18 @@ func Conflict(c *gin.Context, code string, errors map[string]string) {
 }
 
 // 422 Unprocessable Entity
-func UnprocessableEntity(c *gin.Context, code, message string, errors map[string]string) {
-	if code == "" {
-		code = "UNPROCESSABLE_ENTITY"
+func InputValidationError(c *gin.Context, errors map[string]string, message string) {
+	if message == "" {
+		message = "Invalid Request Parameter(s)"
 	}
 	Error(
 		c,
 		http.StatusUnprocessableEntity,
 		errors,
-		code,
+		"INVALID_INPUT",
 		message,
 		nil,
 	)
-}
-
-func InputValidationError(c *gin.Context, errors map[string]string) {
-	UnprocessableEntity(c, "INVALID_INPUT", "Invalid Request Parameter(s)", errors)
 }
 
 // 429 Too Many Requests
@@ -329,7 +314,6 @@ func apiResponse[T any](
 			Code:      code,
 			RequestID: requestID,
 			Meta:      meta,
-			Message:   message,
 		}
 		if data != nil {
 			res.Data = *data
